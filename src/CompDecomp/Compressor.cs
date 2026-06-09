@@ -45,11 +45,19 @@ static public class Compressor
     static public string Decompress(string input)
     {
         StringBuilder output = new StringBuilder(input.Length * 10);
+        bool isReadingCount = false;
 
         for (int i = 0; i < input.Length; i++)
         {            
             if (char.IsDigit(input[i]))
             {
+                // если первый символ это цифра, то записать как есть
+                if (!isReadingCount)
+                {
+                    output.Append(input[i]);
+                    continue;
+                }                    
+                
                 int j = i;
 
                 // Создаем аккумулятор символов цифр
@@ -73,13 +81,16 @@ static public class Compressor
                 // Console.Write($"{num}\n");
 
                 // Добавляем в выходную строку символ N раз, 
-                output.Append(input[i - 1], num - 1);  
+                num = num - 1 > 0 ? num - 1 : 0;
+                output.Append(input[i - 1], num);  
                 
-                i = j - 1;                
+                i = j - 1;   
+                isReadingCount = false;             
             }
             else
             {
                 output.Append(input[i]);
+                isReadingCount = true;
             }
             
             //System.Console.WriteLine(output.ToString());
